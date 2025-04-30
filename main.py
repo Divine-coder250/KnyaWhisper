@@ -8,9 +8,6 @@ from huggingface_hub import login
 from dotenv import load_dotenv
 from transformers import VitsModel, VitsTokenizer
 
-
-
-
 # Load environment variables (for Hugging Face token)
 load_dotenv()
 api_token = os.getenv('HUG_TOKEN')
@@ -32,7 +29,7 @@ qa_pairs = {
     "bite": "Ni byiza, urakoze!",
     "witwa nde": "Nitwa Itangamahoro",
     "amasomo ameze gute": "Ameze neza!",
-    "Abanyarwanda bavuga uruhe rurimi": "Bavuga ururimi rw'Ikinyarwanda",
+    "abanyarwanda bavuga uruhe rurimi": "Bavuga ururimi rw'Ikinyarwanda",
     "amakuru yawe": "Ni meza, ndashimira Imana!"
 }
 
@@ -52,7 +49,6 @@ def speak_answer(answer_text, output_file):
     # Play audio (Windows)
     os.system(f'start {output_file}')
 
-
 # Folder containing .wav input files
 audio_folder = 'audio/'
 
@@ -67,8 +63,12 @@ for file_name in os.listdir(audio_folder):
             resampler = Resample(orig_freq=sample_rate, new_freq=16000)
             waveform = resampler(waveform)
 
+        # Ensure mono audio by averaging channels if needed
+        if waveform.ndim > 1 and waveform.shape[0] > 1:
+            waveform = waveform.mean(dim=0)
+
         # Transcribe audio
-        inputs = asr_processor(waveform.squeeze(), sampling_rate=16000, return_tensors="pt")
+        inputs = asr_processor(waveform, sampling_rate=16000, return_tensors="pt")
         predicted_ids = asr_model.generate(
             inputs["input_features"],
             max_new_tokens=20,
