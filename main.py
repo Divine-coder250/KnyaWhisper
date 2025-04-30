@@ -58,7 +58,7 @@ audio_folder = 'audio/'
 
 # Process each audio file
 for file_name in os.listdir(audio_folder):
-    if file_name.endswith('.m4a'):
+    if file_name.endswith('.wav'):
         file_path = os.path.join(audio_folder, file_name)
 
         # Load and resample if needed
@@ -84,7 +84,7 @@ for file_name in os.listdir(audio_folder):
 
         if matched_answer:
             print(f"Answer: {matched_answer}")
-            output_path = os.path.join(output_folder, f"{file_name.replace('.m4a', '')}_answer.m4a")
+            output_path = os.path.join(output_folder, f"{file_name.replace('.wav', '')}_answer.wav")
             speak_answer(matched_answer, output_path)
         else:
             print("No matching answer found.")
